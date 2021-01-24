@@ -7,10 +7,11 @@ __github_reponame__ = "Paypal-Python-SDK"
 import re
 import os
 
+
 def find_packages():
     path = "."
     ret = []
     for root, dirs, files in os.walk(path):
-        if '__init__.py' in files:
-            ret.append(re.sub('^[^A-z0-9_]+', '', root.replace('/', '.')))
+        if "__init__.py" in files:
+            ret.append(re.sub("^[^A-z0-9_]+", "", root.replace("/", ".")))
     return ret

@@ -1,7 +1,7 @@
 import time
 
-class AccessToken(object):
 
+class AccessToken(object):
     def __init__(self, access_token, expires_in, token_type):
         self.access_token = access_token
         self.expires_in = expires_in
