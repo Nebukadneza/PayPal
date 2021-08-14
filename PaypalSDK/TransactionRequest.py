@@ -1,5 +1,7 @@
 from .core import PayPalHttpClient
 
+from IPython import embed
+
 from datetime import timedelta
 from urllib.parse import quote
 
@@ -59,7 +61,6 @@ class TransactionRequest:
             else:
                 client = PayPalHttpClient(environment)
 
-        prior_balance = None
         transactions = []
         for slice in self.slices:  # @ReservedAssignment
             # We support slices, so that the caller can tweak the cyclical calls
@@ -79,25 +80,6 @@ class TransactionRequest:
                 pages = response.result.total_pages
 
                 for t in response.result.transaction_details:
-                    if prior_balance is None:
-                        prior_balance = float(t.transaction_info.ending_balance.value)
-                    else:
-                        amount = float(t.transaction_info.transaction_amount.value)
-                        fee_amount = getattr(t.transaction_info, "fee_amount", None)
-                        fee = float(fee_amount.value) if fee_amount else 0
-                        balance = float(t.transaction_info.ending_balance.value)
-                        expected_balance = round(prior_balance + amount + fee, 2)
-
-                        # If the balance is not as expected that's a pretty
-                        # HUGE problem! This is an integrity check on the results
-                        # and has helped find issues with the paging for example.
-                        if not balance == expected_balance:
-                            raise Exception(
-                                "Balance mismatch in transactions provided by PayPal."
-                            )
-                        else:
-                            prior_balance = balance
-
                     transactions.append(t)
 
                 if page >= pages:
